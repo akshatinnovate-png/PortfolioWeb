@@ -2730,6 +2730,34 @@ ul.globe-stops {
     transform: none;
   }
 }
+
+/* ==========================================================================
+   09b PRESS — in the news
+   ========================================================================== */
+.press { padding: 0 var(--gutter) 140px; }
+.press__list { list-style: none; margin: 34px 0 0; padding: 0; border-top: 1px solid var(--divider); }
+.press__item { border-bottom: 1px solid var(--divider); }
+.press__link {
+  display: grid;
+  grid-template-columns: 170px minmax(0, 1fr) 120px;
+  gap: 24px;
+  align-items: baseline;
+  padding: 18px 0;
+  text-decoration: none;
+  color: inherit;
+}
+.press__link:hover .press__head,
+.press__link:focus-visible .press__head { text-decoration: underline; }
+.press__outlet {
+  font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--c-700);
+}
+.press__head { font-size: 17px; line-height: 1.45; }
+.press__date { font-family: var(--mono); font-size: 12px; color: var(--n-500); text-align: right; }
+@media (max-width: 820px) {
+  .press__link { grid-template-columns: 1fr; gap: 6px; }
+  .press__date { text-align: left; }
+}
 </style>
 <link rel="canonical" href="https://akshatinnovate-png.github.io/PortfolioWeb/">
 <meta name="author" content="Akshat Sarkar">
@@ -2794,6 +2822,40 @@ ul.globe-stops {
     "subjectOf": [
       {
         "@type": "NewsArticle",
+        "headline": "जमशेदपुर के नौवीं के छात्र का कमाल, 50 रुपये की सेफ्टी टेप के आइडिया पर मिला 9500 डॉलर का अंतरराष्ट्रीय ग्रांट",
+        "url": "https://www.prabhatkhabar.com/state/jharkhand/jamshedpur/indian-student-invents-cheap-gas-leak-detector-wins-9500-grant",
+        "datePublished": "2026-10-12",
+        "author": {
+          "@type": "Person",
+          "name": "Sahil Asthana"
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": "Prabhat Khabar"
+        }
+      },
+      {
+        "@type": "NewsArticle",
+        "headline": "युवा इनोवेटर अक्षत सरकार को 9,500 डॉलर का अंतरराष्ट्रीय ग्रांट",
+        "url": "https://www.livehindustan.com/jharkhand/jamshedpur/story-telco-student-wins-9-500-grant-for-low-cost-lpg-leak-detection-tape-201791802819227.html",
+        "datePublished": "2026-10-12",
+        "publisher": {
+          "@type": "Organization",
+          "name": "Hindustan"
+        }
+      },
+      {
+        "@type": "NewsArticle",
+        "headline": "50 रुपये में गैस लीकेज पहचानने वाली सेफ्टी टेप बनाई, छात्र अक्षत सरकार को मिला 9,500 डॉलर का अंतरराष्ट्रीय ग्रांट",
+        "url": "https://lokalok.in/student-akshat-sarkar-develops-gas-leak-detection-safety-tape-for-50-rupees-receives-9500-dollar-international-grant/",
+        "datePublished": "2026-10-12",
+        "publisher": {
+          "@type": "Organization",
+          "name": "Lok Alok News"
+        }
+      },
+      {
+        "@type": "NewsArticle",
         "headline": "With 5th rank, Class 9 Jharkhand student beats IIT, NIT contenders at IISc coding competition",
         "url": "https://www.moneycontrol.com/education/with-5th-rank-class-9-jharkhand-student-outshines-iit-nit-contenders-at-iisc-coding-competition-article-13875337.html",
         "publisher": {
@@ -2853,35 +2915,6 @@ ul.globe-stops {
         "publisher": {
           "@type": "Organization",
           "name": "The Avenue Mail"
-        }
-      },
-      {
-        "@type": "NewsArticle",
-        "headline": "जमशेदपुर के नौवीं के छात्र का कमाल, 50 रुपये की सेफ्टी टेप के आइडिया पर मिला 9500 डॉलर का अंतरराष्ट्रीय ग्रांट",
-        "url": "https://www.prabhatkhabar.com/state/jharkhand/jamshedpur/indian-student-invents-cheap-gas-leak-detector-wins-9500-grant",
-        "publisher": {
-          "@type": "Organization",
-          "name": "Prabhat Khabar"
-        }
-      },
-      {
-        "@type": "NewsArticle",
-        "headline": "50 रुपये में गैस लीकेज पहचानने वाली सेफ्टी टेप बनाई, छात्र अक्षत सरकार को मिला 9,500 डॉलर का अंतरराष्ट्रीय ग्रांट",
-        "url": "https://lokalok.in/student-akshat-sarkar-develops-gas-leak-detection-safety-tape-for-50-rupees-receives-9500-dollar-international-grant/",
-        "datePublished": "2026-10-12",
-        "publisher": {
-          "@type": "Organization",
-          "name": "Lok Alok News"
-        }
-      },
-      {
-        "@type": "NewsArticle",
-        "headline": "युवा इनोवेटर अक्षत सरकार को 9,500 डॉलर का अंतरराष्ट्रीय ग्रांट",
-        "url": "https://www.livehindustan.com/jharkhand/jamshedpur/story-telco-student-wins-9-500-grant-for-low-cost-lpg-leak-detection-tape-201791802819227.html",
-        "datePublished": "2026-10-12",
-        "publisher": {
-          "@type": "Organization",
-          "name": "Hindustan"
         }
       }
     ]
@@ -3009,6 +3042,7 @@ ul.globe-stops {
   <div class="hero__b64" id="heroB64" aria-hidden="true"></div>
 
   <div class="hero__meta">
+    <div class="reveal"><span>Name</span>Akshat Sarkar (<span lang="hi">अक्षत सरकार</span>)</div>
     <div class="reveal"><span>Position</span>Student, Class IX</div>
     <div class="reveal"><span>Institution</span>Gulmohur High School, Jamshedpur, Jharkhand, India</div>
     <div class="reveal"><span>Board</span>CISCE, New Delhi</div>
@@ -3223,6 +3257,88 @@ ul.globe-stops {
   </h2>
   <p class="wins__quote reveal">Youngest awardee in the history of Samsung Solve for Tomorrow India Chapter.<small>Kinexa · Top 40 · Samsung Solve for Tomorrow India 2026</small></p>
   <div class="wins__cols" id="winsCols"></div>
+</section>
+
+<!-- ======================================================================
+     09b IN THE NEWS
+     ====================================================================== -->
+<section class="press" id="press" data-screen-label="09b Press">
+  <span class="kicker">09b &#8212; Press coverage</span>
+  <h2 class="display display--sm" style="margin-top:22px">
+    <span class="reveal-line"><span>In the news.</span></span>
+  </h2>
+  <ul class="press__list">
+      <li class="press__item reveal">
+        <a class="press__link" href="https://www.prabhatkhabar.com/state/jharkhand/jamshedpur/indian-student-invents-cheap-gas-leak-detector-wins-9500-grant" target="_blank" rel="noopener noreferrer" data-cursor="Read">
+          <span class="press__outlet">Prabhat Khabar</span>
+          <span class="press__head" lang="hi">जमशेदपुर के नौवीं के छात्र का कमाल, 50 रुपये की सेफ्टी टेप के आइडिया पर मिला 9500 डॉलर का अंतरराष्ट्रीय ग्रांट</span>
+          <span class="press__date"><time datetime="2026-10-12">12 Oct 2026</time></span>
+        </a>
+      </li>
+      <li class="press__item reveal">
+        <a class="press__link" href="https://www.livehindustan.com/jharkhand/jamshedpur/story-telco-student-wins-9-500-grant-for-low-cost-lpg-leak-detection-tape-201791802819227.html" target="_blank" rel="noopener noreferrer" data-cursor="Read">
+          <span class="press__outlet">Hindustan</span>
+          <span class="press__head" lang="hi">युवा इनोवेटर अक्षत सरकार को 9,500 डॉलर का अंतरराष्ट्रीय ग्रांट</span>
+          <span class="press__date"><time datetime="2026-10-12">12 Oct 2026</time></span>
+        </a>
+      </li>
+      <li class="press__item reveal">
+        <a class="press__link" href="https://lokalok.in/student-akshat-sarkar-develops-gas-leak-detection-safety-tape-for-50-rupees-receives-9500-dollar-international-grant/" target="_blank" rel="noopener noreferrer" data-cursor="Read">
+          <span class="press__outlet">Lok Alok News</span>
+          <span class="press__head" lang="hi">50 रुपये में गैस लीकेज पहचानने वाली सेफ्टी टेप बनाई, छात्र अक्षत सरकार को मिला 9,500 डॉलर का अंतरराष्ट्रीय ग्रांट</span>
+          <span class="press__date"><time datetime="2026-10-12">12 Oct 2026</time></span>
+        </a>
+      </li>
+      <li class="press__item reveal">
+        <a class="press__link" href="https://www.moneycontrol.com/education/with-5th-rank-class-9-jharkhand-student-outshines-iit-nit-contenders-at-iisc-coding-competition-article-13875337.html" target="_blank" rel="noopener noreferrer" data-cursor="Read">
+          <span class="press__outlet">Moneycontrol</span>
+          <span class="press__head">With 5th rank, Class 9 Jharkhand student beats IIT, NIT contenders at IISc coding competition</span>
+          <span class="press__date"></span>
+        </a>
+      </li>
+      <li class="press__item reveal">
+        <a class="press__link" href="https://avenuemail.in/jamshedpur-student-wins-first-prize-at-americas-largest-ai-fest-amazon-aws-innovate-x/" target="_blank" rel="noopener noreferrer" data-cursor="Read">
+          <span class="press__outlet">The Avenue Mail</span>
+          <span class="press__head">Jamshedpur Student Wins First Prize at America&#x27;s Largest AI Fest, Amazon AWS Innovate X</span>
+          <span class="press__date"></span>
+        </a>
+      </li>
+      <li class="press__item reveal">
+        <a class="press__link" href="https://avenuemail.in/gulmohur-school-jamshedpurs-young-coder-triumphs-at-indias-biggest-design-championship/" target="_blank" rel="noopener noreferrer" data-cursor="Read">
+          <span class="press__outlet">The Avenue Mail</span>
+          <span class="press__head">Gulmohur School Jamshedpur&#x27;s young coder triumphs at India&#x27;s Biggest Design Championship</span>
+          <span class="press__date"></span>
+        </a>
+      </li>
+      <li class="press__item reveal">
+        <a class="press__link" href="https://avenuemail.in/jamshedpur-students-innovative-robobot-design-wins-accolades-at-iit-bombay-techfest/" target="_blank" rel="noopener noreferrer" data-cursor="Read">
+          <span class="press__outlet">The Avenue Mail</span>
+          <span class="press__head">Jamshedpur student&#x27;s innovative Robobot design wins accolades at IIT Bombay Techfest</span>
+          <span class="press__date"></span>
+        </a>
+      </li>
+      <li class="press__item reveal">
+        <a class="press__link" href="https://avenuemail.in/gulmohur-high-schools-young-innovators-excel-at-nit-jamshedpur/" target="_blank" rel="noopener noreferrer" data-cursor="Read">
+          <span class="press__outlet">The Avenue Mail</span>
+          <span class="press__head">Gulmohur High School&#x27;s young innovators excel at NIT Jamshedpur</span>
+          <span class="press__date"></span>
+        </a>
+      </li>
+      <li class="press__item reveal">
+        <a class="press__link" href="https://avenuemail.in/gulmohur-school-jamshedpur-student-stuns-with-5th-rank-among-iit-nit-participants-at-iisc-coding-event/" target="_blank" rel="noopener noreferrer" data-cursor="Read">
+          <span class="press__outlet">The Avenue Mail</span>
+          <span class="press__head">Gulmohur School Jamshedpur student stuns with 5th rank among IIT, NIT participants at IISc Coding Event</span>
+          <span class="press__date"></span>
+        </a>
+      </li>
+      <li class="press__item reveal">
+        <a class="press__link" href="https://avenuemail.in/jamshedpur-students-lpg-safety-idea-earns-inspire-manak-award/" target="_blank" rel="noopener noreferrer" data-cursor="Read">
+          <span class="press__outlet">The Avenue Mail</span>
+          <span class="press__head">Jamshedpur student&#x27;s LPG safety idea earns INSPIRE MANAK Award</span>
+          <span class="press__date"></span>
+        </a>
+      </li>
+  </ul>
 </section>
 
 <!-- ======================================================================
