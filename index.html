@@ -3557,7 +3557,7 @@ ul.globe-stops {
         <span class="reveal-line"><span>Jamshedpur,</span></span>
         <span class="reveal-line"><span>Outward.</span></span>
       </h2>
-      <p class="lede">Built in Jharkhand, recognised on national platforms from Mumbai to Kharagpur to New Delhi.</p>
+      <p class="lede">Built in Jharkhand, recognised from Mumbai and Bengaluru to Kharagpur and New Delhi &#8212; and funded from Virginia.</p>
       <ul class="globe-stops" id="globeStops"></ul>
     </div>
     <div class="globe-hud" id="globeHud"></div>
@@ -4135,6 +4135,7 @@ const PLACES = [
   { id: "kgp", name: "Kharagpur", lat: 22.3149, lon: 87.3105, note: "IIT Kharagpur · PCB Inspector collaboration" },
   { id: "del", name: "New Delhi", lat: 28.6139, lon: 77.209, note: "CISCE · DST & NIF India · INSPIRE MANAK" },
   { id: "blr", name: "Bengaluru", lat: 13.0219, lon: 77.5671, note: "IISc Bengaluru · Rhapsody 4.0 · 5th Rank" },
+  { id: "gmu", name: "Virginia, USA", lat: 38.8304, lon: -77.3077, note: "George Mason University · Mercatus Center · Emergent Ventures grant" },
 ];
 
 const TICKER = [
@@ -5757,11 +5758,18 @@ function initGlobe() {
   let autoLon = 10;
   let state = { lon: 10, lat: 12, R: 300, cx: 0, cy: 0 };
 
+  /* The rotation is fixed for the whole frame, but these four trig calls
+     were being redone inside project() - about 14,000 times per frame.
+     syncTrig() runs once, right after state.lonR/latR are set. */
+  let cl = 1, sl = 0, cp = 1, sp = 0;
+  function syncTrig() {
+    cl = Math.cos(state.lonR);
+    sl = Math.sin(state.lonR);
+    cp = Math.cos(state.latR);
+    sp = Math.sin(state.latR);
+  }
+
   function project(X, Y, Z, out) {
-    const cl = Math.cos(state.lonR);
-    const sl = Math.sin(state.lonR);
-    const cp = Math.cos(state.latR);
-    const sp = Math.sin(state.latR);
     const X1 = X * cl - Z * sl;
     const Z1 = X * sl + Z * cl;
     const Y2 = Y * cp - Z1 * sp;
@@ -5773,6 +5781,22 @@ function initGlobe() {
   }
 
   const tmp = [0, 0, 0];
+  const gv = [0, 0, 0];
+  /* reused every frame; this used to be a fresh Float32Array per frame */
+  const proj = new Float32Array(LAND.length);
+  const plates = [
+    [INK.cyan, 0, 0],
+    [INK.magenta, 0, 0],
+    [INK.yellow, 0, 0],
+  ];
+  const toVecInto = (lat, lon, out) => {
+    const a = (lat * Math.PI) / 180;
+    const b = (lon * Math.PI) / 180;
+    out[0] = Math.cos(a) * Math.sin(b);
+    out[1] = Math.sin(a);
+    out[2] = Math.cos(a) * Math.cos(b);
+    return out;
+  };
 
   function draw(t, dt) {
     const { ctx, w, h } = cv;
@@ -5786,6 +5810,7 @@ function initGlobe() {
     state.lat = lerp(12, home.lat - 2, toIndia);
     state.lonR = (state.lon * Math.PI) / 180;
     state.latR = (state.lat * Math.PI) / 180;
+    syncTrig();
     state.R = lerp(minDim * (mobile ? 0.42 : 0.46), minDim * (mobile ? 1.5 : 2.3), zoom);
     state.cx = lerp(w * (mobile ? 0.5 : 0.68), w * (mobile ? 0.5 : 0.66), zoom);
     state.cy = lerp(h * (mobile ? 0.36 : 0.52), h * (mobile ? 0.4 : 0.5), zoom);
@@ -5823,8 +5848,8 @@ function initGlobe() {
       ctx.beginPath();
       let pen = false;
       for (let lon = -180; lon <= 180; lon += 4) {
-        const v = toVec(lat, lon);
-        project(v[0], v[1], v[2], tmp);
+        toVecInto(lat, lon, gv);
+        project(gv[0], gv[1], gv[2], tmp);
         if (tmp[2] > 0) {
           pen ? ctx.lineTo(tmp[0], tmp[1]) : ctx.moveTo(tmp[0], tmp[1]);
           pen = true;
@@ -5836,8 +5861,8 @@ function initGlobe() {
       ctx.beginPath();
       let pen = false;
       for (let lat = -88; lat <= 88; lat += 4) {
-        const v = toVec(lat, lon);
-        project(v[0], v[1], v[2], tmp);
+        toVecInto(lat, lon, gv);
+        project(gv[0], gv[1], gv[2], tmp);
         if (tmp[2] > 0) {
           pen ? ctx.lineTo(tmp[0], tmp[1]) : ctx.moveTo(tmp[0], tmp[1]);
           pen = true;
@@ -5858,13 +5883,10 @@ function initGlobe() {
     /* land, three plates */
     const dotBase = clamp(state.R / 260, 1.1, 5.5);
     const reg = clamp(state.R / 300, 0.8, 3.2);
-    const plates = [
-      [INK.cyan, -reg, -reg * 0.7],
-      [INK.magenta, reg, reg * 0.6],
-      [INK.yellow, -reg * 0.5, reg],
-    ];
+    plates[0][1] = -reg;        plates[0][2] = -reg * 0.7;
+    plates[1][1] = reg;         plates[1][2] = reg * 0.6;
+    plates[2][1] = -reg * 0.5;  plates[2][2] = reg;
     ctx.globalCompositeOperation = "multiply";
-    const proj = new Float32Array((LAND.length / 3) * 3);
     let m = 0;
     for (let i = 0; i < LAND.length; i += 3) {
       project(LAND[i], LAND[i + 1], LAND[i + 2], tmp);
@@ -5872,13 +5894,16 @@ function initGlobe() {
       if (tmp[0] < -10 || tmp[1] < -10 || tmp[0] > w + 10 || tmp[1] > h + 10) continue;
       proj[m++] = tmp[0];
       proj[m++] = tmp[1];
-      proj[m++] = tmp[2];
+      /* store the dot size, not z: it was recomputed once per plate */
+      proj[m++] = dotBase * (0.45 + 0.55 * tmp[2]);
     }
-    for (const [col, ox, oy] of plates) {
-      ctx.fillStyle = col;
+    for (let pi = 0; pi < plates.length; pi++) {
+      const ox = plates[pi][1];
+      const oy = plates[pi][2];
+      ctx.fillStyle = plates[pi][0];
       for (let i = 0; i < m; i += 3) {
-        const s = dotBase * (0.45 + 0.55 * proj[i + 2]);
-        ctx.fillRect(proj[i] + ox - s / 2, proj[i + 1] + oy - s / 2, s, s);
+        const s = proj[i + 2];
+        ctx.fillRect(proj[i] + ox - s * 0.5, proj[i + 1] + oy - s * 0.5, s, s);
       }
     }
     ctx.globalCompositeOperation = "source-over";
@@ -5909,6 +5934,12 @@ function initGlobe() {
         const v = slerp(homeV, pl.v, tt);
         const hgt = 1 + Math.sin(Math.PI * tt) * lift;
         project(v[0] * hgt, v[1] * hgt, v[2] * hgt, tmp);
+        /* lift the pen behind the horizon, as the graticule does - with a
+           stop on the far side an unculled arc draws across the disc */
+        if (tmp[2] <= 0) {
+          pen = false;
+          continue;
+        }
         pen ? ctx.lineTo(tmp[0], tmp[1]) : ctx.moveTo(tmp[0], tmp[1]);
         pen = true;
       }
@@ -5917,10 +5948,12 @@ function initGlobe() {
       const head = slerp(homeV, pl.v, localK);
       const hh = 1 + Math.sin(Math.PI * localK) * lift;
       project(head[0] * hh, head[1] * hh, head[2] * hh, tmp);
-      ctx.fillStyle = INK.magenta;
-      ctx.beginPath();
-      ctx.arc(tmp[0], tmp[1], 4, 0, TAU);
-      ctx.fill();
+      if (tmp[2] > 0) {
+        ctx.fillStyle = INK.magenta;
+        ctx.beginPath();
+        ctx.arc(tmp[0], tmp[1], 4, 0, TAU);
+        ctx.fill();
+      }
     });
 
     /* place markers + tags */
