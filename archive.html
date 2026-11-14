@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Press Archive · Akshat Sarkar</title>
+<meta name="description" content="A digital archive of newspaper and media coverage of Akshat Sarkar, inventor of TS-GLDC and Mercury.">
+<link rel="canonical" href="https://akshatinnovate-png.github.io/PortfolioWeb/archive.html">
+<style>
+  :root { --ink:#111; --mid:#555; --line:#ccc; --bg:#fff; --soft:#f5f5f5; --link:#0b5cad; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.5 Helvetica, Arial, sans-serif; }
+  a { color:var(--link); text-decoration:none; } a:hover { text-decoration:underline; }
+  header { background:#111; color:#fff; padding:14px 24px; display:flex; gap:16px; align-items:baseline; flex-wrap:wrap; }
+  header b { font-size:18px; letter-spacing:.5px; }
+  header span { color:#aaa; font-size:13px; }
+  header a { color:#fff; margin-left:auto; font-size:13px; }
+  main { max-width:1100px; margin:0 auto; padding:24px; }
+  h1 { font:normal 28px Georgia, serif; margin:8px 0 4px; }
+  .sub { color:var(--mid); margin:0 0 20px; max-width:720px; }
+  .bar { display:flex; gap:12px; flex-wrap:wrap; align-items:center; border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding:12px 0; margin-bottom:20px; }
+  .bar input { flex:1; min-width:200px; padding:8px 10px; border:1px solid var(--line); font:inherit; }
+  .chips button { border:1px solid var(--line); background:#fff; padding:6px 12px; margin:2px; font:inherit; cursor:pointer; }
+  .chips button.on { background:#111; color:#fff; border-color:#111; }
+  .count { color:var(--mid); font-size:13px; }
+  h2 { font:bold 13px Helvetica, Arial, sans-serif; text-transform:uppercase; letter-spacing:1px; color:var(--mid); border-bottom:1px solid var(--line); padding-bottom:6px; margin:32px 0 6px; }
+  .ach-note { color:var(--mid); font-size:14px; margin:0 0 14px; max-width:780px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(230px, 1fr)); gap:18px; }
+  .item { border:1px solid var(--line); background:#fff; display:flex; flex-direction:column; }
+  .thumb { aspect-ratio:3/4; background:var(--soft); display:flex; align-items:center; justify-content:center; overflow:hidden; cursor:zoom-in; border-bottom:1px solid var(--line); }
+  .thumb img { width:100%; height:100%; object-fit:cover; object-position:top; filter:grayscale(1); transition:filter .2s; }
+  .item:hover .thumb img { filter:none; }
+  .pending { color:#999; font-size:13px; text-align:center; padding:12px; cursor:default; }
+  .meta { padding:10px 12px 12px; font-size:13px; }
+  .meta .paper { font-weight:bold; font-size:14px; }
+  .meta .title { margin:4px 0; font-family:Georgia, serif; font-size:15px; line-height:1.35; }
+  .meta .small { color:var(--mid); }
+  .tag { display:inline-block; font-size:11px; border:1px solid var(--line); padding:1px 6px; margin-top:6px; color:var(--mid); }
+  #lb { position:fixed; inset:0; background:rgba(0,0,0,.92); display:none; flex-direction:column; align-items:center; justify-content:center; padding:20px; z-index:9; }
+  #lb.on { display:flex; }
+  #lb img { max-width:96vw; max-height:84vh; background:#fff; }
+  #lb p { color:#ddd; margin:10px 0 0; text-align:center; font-size:14px; }
+  #lb button { position:absolute; top:14px; right:20px; background:none; border:0; color:#fff; font-size:30px; cursor:pointer; }
+  footer { border-top:1px solid var(--line); margin-top:48px; padding:18px 24px; color:var(--mid); font-size:12px; text-align:center; }
+</style>
+</head>
+<body>
+<header>
+  <b>PRESS ARCHIVE</b>
+  <span>Akshat Sarkar · Jamshedpur, India</span>
+  <a href="index.html">&larr; Back to portfolio</a>
+</header>
+
+<main>
+  <h1>Press Archive</h1>
+  <p class="sub">Scans of the physical newspapers that have covered my work, kept here because print does not last. Each entry shows the paper, date, page and headline. Hover a scan to see it in colour, click to enlarge.</p>
+
+  <div class="bar">
+    <input id="q" type="search" placeholder="Search by paper, headline or year">
+    <div class="chips" id="chips"></div>
+    <span class="count" id="count"></span>
+  </div>
+
+  <div id="out"></div>
+</main>
+
+<div id="lb"><button aria-label="Close">&times;</button><img alt=""><p></p></div>
+
+<footer>
+  Clippings are reproduced as a personal record of coverage. All rights remain with the original publishers.
+  Where an online version exists, it is linked on the entry.
+</footer>
+
+<script>
+/* ---------- HOW TO ADD AN ENTRY ----------
+   1. Put the scan in /archive/ (e.g. archive/prabhat-khabar-2026-11-14.jpg)
+   2. Add one object to ENTRIES below. "img" empty = shows "Scan pending".
+   3. "ach" must match the "id" of one achievement in ACHIEVEMENTS.
+------------------------------------------ */
+const ACHIEVEMENTS = [
+ {
+  "id": "mercury",
+  "name": "Mercury · National Design Championship 2026",
+  "note": "AI sign language interpreter. 1st Place, Senior Coding, North & East region."
+ },
+ {
+  "id": "grant",
+  "name": "TS-GLDC · Emergent Ventures grant",
+  "note": "Electricity-free LPG leak-detection tape. Grant of US$9,500 from Emergent Ventures, Mercatus Center, George Mason University."
+ },
+ {
+  "id": "samsung",
+  "name": "Samsung Solve for Tomorrow India · Top 40 (Sept 2026)",
+  "note": "Kinexa, an Indian Sign Language animation tool for deaf and hard-of-hearing athletes and their coaches. Selected from 3.4 lakh+ applications for the Top 40, with a 10-day Innovation Bootcamp and Top 40 Pitch Event in Gurugram."
+ },
+ {
+  "id": "feature",
+  "name": "Features and profiles",
+  "note": "Profiles that cover more than one achievement."
+ },
+ {
+  "id": "manak",
+  "name": "TS-GLDC · INSPIRE MANAK Award",
+  "note": "Selected under the INSPIRE MANAK Scheme 2025, Department of Science and Technology, Government of India."
+ },
+ {
+  "id": "rhapsody",
+  "name": "Rhapsody 4.0 · IISc Bengaluru",
+  "note": "5th rank in the Coding Challenge, Open Category, as the only school-level participant."
+ },
+ {
+  "id": "innovatex",
+  "name": "Amazon AWS InnovateX · First Prize, Junior (Dec 2025)",
+  "note": "First position in the Junior category, Amazon InnovateX, with an AI model that detects fraudulent returns in e-commerce. Papers report 60,000+ entries from Class 6 to 12."
+ },
+ {
+  "id": "sparkx",
+  "name": "SparkX · IIT Bombay, National 2nd (Dec 2025)",
+  "note": "Second position in SparkX, a pre-summit AI innovation challenge under MeitY's National AI Mission, with 10,000+ participants. Direct entry to the IdeaBaz finals."
+ },
+ {
+  "id": "nit",
+  "name": "Industry-Academia Conclave 2025 · NIT Jamshedpur (Dec 2025)",
+  "note": "Team of four from Class 8, 5th position among 101 shortlisted teams from 600+ schools, with a smart grid and microgrid model. Akshat was team leader."
+ },
+ {
+  "id": "ict360",
+  "name": "ICT 360 · India's Biggest Design Championship (Oct 2025)",
+  "note": "Second place, Middle Coding Category, with an AR/VR-based waste identification and sorting project."
+ },
+ {
+  "id": "techfest",
+  "name": "Blix-a-thon · Techfest, IIT Bombay (Dec 2024)",
+  "note": "Runner-up, Best Innovation Category Award, Junior Category, among 1,300 participants, with a Robobot for a robofootball match."
+ },
+ {
+  "id": "bell",
+  "name": "Gulmohur AI Smart Bell System",
+  "note": "Built with the school's AI and Robotics team."
+ },
+ {
+  "id": "docs",
+  "name": "Primary documents",
+  "note": "Original letters and certificates behind the coverage."
+ }
+];
+
+const ENTRIES = [
+ {
+  "ach": "grant",
+  "paper": "The Times of India (online)",
+  "date": "2026-10-13",
+  "page": "",
+  "title": "Class 9 student wins $9,500 intl grant to develop gas leak detection tape",
+  "orig": "",
+  "url": "https://timesofindia.indiatimes.com/city/ranchi/class-9-student-wins-9500-intl-grant-to-develop-gas-leak-detection-tape/articleshow/134918647.cms",
+  "img": "archive/web/toi-web-grant-2026-10-13.jpg"
+ },
+ {
+  "ach": "grant",
+  "paper": "Prabhat Khabar",
+  "date": "",
+  "page": "",
+  "title": "Exclusive: An alarm will sound the moment a gas leak starts in the kitchen",
+  "orig": "रसोई में गैस लीक होते ही बजेगा अलार्म",
+  "url": "",
+  "img": "archive/prabhat-khabar-exclusive-gas-alarm.jpg"
+ },
+ {
+  "ach": "grant",
+  "paper": "Paper to confirm",
+  "date": "2026-10-12",
+  "page": "",
+  "title": "Gulmohur High School's Akshat Sarkar receives $9,500 international grant",
+  "orig": "गुलमोहर हाई स्कूल के छात्र अक्षत सरकार 9,500 डॉलर का मिला अंतरराष्ट्रीय ग्रांट",
+  "url": "",
+  "img": "archive/hindi-2026-10-12-grant.jpg"
+ },
+ {
+  "ach": "grant",
+  "paper": "Dainik Bhaskar",
+  "date": "2026-10-13",
+  "page": "",
+  "title": "Gulmohur High School's Akshat gets $9,500 international grant",
+  "orig": "गुलमोहर हाई स्कूल के छात्र अक्षत को 9500 डॉलर का अंतरराष्ट्रीय ग्रांट",
+  "url": "",
+  "img": "archive/dainik-bhaskar-2026-10-13-grant.jpg"
+ },
+ {
+  "ach": "grant",
+  "paper": "The Avenue Mail",
+  "date": "2026-10-12",
+  "page": "",
+  "title": "Gulmohur's Akshat secures $9,500 global grant for LPG safety innovation",
+  "orig": "",
+  "url": "",
+  "img": "archive/mail-2026-10-12-grant.jpg"
+ },
+ {
+  "ach": "docs",
+  "paper": "Mercatus Center, George Mason University",
+  "date": "2026-10-05",
+  "page": "",
+  "title": "Grant confirmation letter, EV #92556 (original document)",
+  "orig": "",
+  "url": "",
+  "img": "archive/mercatus-grant-letter-2026-10-05.jpg"
+ },
+ {
+  "ach": "manak",
+  "paper": "Paper to confirm",
+  "date": "2026-03-16",
+  "page": "",
+  "title": "Gulmohur High School's Akshat Sarkar receives INSPIRE MANAK Award",
+  "orig": "गुलमोहर हाई स्कूल के छात्र अक्षत सरकार को मिला इंस्पायर मानक अवार्ड",
+  "url": "",
+  "img": "archive/hindi-2026-03-16-manak.jpg"
+ },
+ {
+  "ach": "manak",
+  "paper": "The Avenue Mail",
+  "date": "2026-03-15",
+  "page": "",
+  "title": "Gulmohur student's LPG safety idea earns INSPIRE MANAK Award",
+  "orig": "",
+  "url": "",
+  "img": "archive/mail-2026-03-15-manak.jpg"
+ },
+ {
+  "ach": "manak",
+  "paper": "Paper to confirm",
+  "date": "",
+  "page": "",
+  "title": "Jamshedpur Student Akshat Sarkar Receives National Award for Gas Leak Detection Tape Innovation",
+  "orig": "",
+  "url": "",
+  "img": "archive/english-manak-national-award.jpg"
+ },
+ {
+  "ach": "manak",
+  "paper": "Dainik Jagran",
+  "date": "",
+  "page": "",
+  "title": "Akshat's magic tape will protect from gas leaks, receives national honour",
+  "orig": "गैस रिसाव से बचाएगी अक्षत की जादुई टेप, मिला राष्ट्रीय सम्मान",
+  "url": "",
+  "img": "archive/dainik-jagran-manak.jpg"
+ },
+ {
+  "ach": "manak",
+  "paper": "Paper to confirm",
+  "date": "",
+  "page": "",
+  "title": "Gulmohur High School's Akshat gets INSPIRE MANAK Award, builds cheap gas leak detector",
+  "orig": "गुलमोहर हाई स्कूल के अक्षत को इंस्पायर मानक अवॉर्ड, बनाया सस्ता गैस लीक डिटेक्टर",
+  "url": "",
+  "img": "archive/hindi-manak-cheap-detector.jpg"
+ },
+ {
+  "ach": "manak",
+  "paper": "Paper to confirm",
+  "date": "",
+  "page": "",
+  "title": "Gulmohur's Akshat Sarkar receives 'INSPIRE MANAK Puraskar'",
+  "orig": "गुलमोहर के अक्षत सरकार को 'इंस्पायर मानक पुरस्कार'",
+  "url": "",
+  "img": "archive/hindi-manak-puraskar.jpg"
+ },
+ {
+  "ach": "manak",
+  "paper": "Paper to confirm",
+  "date": "",
+  "page": "",
+  "title": "Gulmohur school's Akshat Sarkar gets national honour for gas leakage detection tape",
+  "orig": "गुलमोहर स्कूल के अक्षत सरकार का नवाचार, गैस लीकेज पहचान टेप के लिए मिला राष्ट्रीय सम्मान",
+  "url": "",
+  "img": "archive/hindi-manak-bibha.jpg"
+ },
+ {
+  "ach": "mercury",
+  "paper": "The Times of India (online)",
+  "date": "2026-11-11",
+  "page": "",
+  "title": "Jamshedpur student wins regional coding award with AI-powered sign language interpreter",
+  "orig": "",
+  "url": "https://timesofindia.indiatimes.com/city/ranchi/jamshedpur-student-wins-regional-coding-award-with-ai-powered-sign-language-interpreter/articleshow/135737093.cms",
+  "img": "archive/web/toi-web-mercury-2026-11-11.jpg"
+ },
+ {
+  "ach": "mercury",
+  "paper": "Paper to confirm",
+  "date": "2026-11-11",
+  "page": "",
+  "title": "Gulmohur student Akshat wins National Design C'ship",
+  "orig": "",
+  "url": "",
+  "img": "archive/english-ndc-2026-11-11.jpg"
+ },
+ {
+  "ach": "mercury",
+  "paper": "Paper to confirm",
+  "date": "",
+  "page": "",
+  "title": "Gulmohur High School's Akshat Sarkar wins first place at National Design Championship",
+  "orig": "नेशनल डिजाइन चैंपियनशिप में गुलमोहर हाई स्कूल के अक्षत सरकार ने हासिल किया प्रथम स्थान",
+  "url": "",
+  "img": "archive/hindi-ndc-bibha.jpg"
+ },
+ {
+  "ach": "mercury",
+  "paper": "Paper to confirm",
+  "date": "",
+  "page": "",
+  "title": "Gulmohur's Akshat wins first place at National Design Championship",
+  "orig": "गुलमोहर के अक्षत ने नेशनल डिजाइन चैंपियनशिप में जीता पहला स्थान",
+  "url": "",
+  "img": "archive/hindi-ndc-short.jpg"
+ },
+ {
+  "ach": "mercury",
+  "paper": "Paper to confirm",
+  "date": "",
+  "page": "",
+  "title": "Gulmohur's Akshat Sarkar wins first place at National Design Championship",
+  "orig": "गुलमोहर के अक्षत सरकार ने नेशनल डिजाइन चैंपियनशिप में प्रथम स्थान हासिल किया",
+  "url": "",
+  "img": "archive/hindi-ndc-third.jpg"
+ },
+ {
+  "ach": "rhapsody",
+  "paper": "The Avenue Mail",
+  "date": "2026-03-30",
+  "page": "",
+  "title": "Gulmohur student stuns with 5th rank among IIT, NIT participants",
+  "orig": "",
+  "url": "",
+  "img": "archive/mail-2026-03-30-rhapsody.jpg"
+ },
+ {
+  "ach": "bell",
+  "paper": "Paper to confirm",
+  "date": "",
+  "page": "",
+  "title": "Gulmohur High School, Jamshedpur launches AI-powered smart bell system",
+  "orig": "गुलमोहर हाई स्कूल, जमशेदपुर ने शुरू किया एआई-संचालित स्मार्ट बेल सिस्टम",
+  "url": "",
+  "img": "archive/hindi-smart-bell.jpg"
+ },
+ {
+  "ach": "feature",
+  "paper": "Prabhat Khabar",
+  "date": "2026-11-14",
+  "page": "2",
+  "title": "Children's Day special: small age, big achievements",
+  "orig": "छोटी उम्र, बड़े कारनामे : शहर के बच्चों ने अपनी प्रतिभा से देश में बनायी पहचान",
+  "url": "",
+  "img": "archive/prabhat-khabar-2026-11-14-p2.jpg"
+ },
+ {
+  "ach": "innovatex",
+  "paper": "Dainik Bhaskar",
+  "date": "2026-01-08",
+  "page": "",
+  "title": "Gulmohur student's AI model honoured in America",
+  "orig": "गुलमोहर के स्टूडेंट के एआई मॉडल को अमेरिका में सम्मान",
+  "url": "",
+  "img": "archive/dainik-bhaskar-2026-01-08-innovatex.jpg"
+ },
+ {
+  "ach": "innovatex",
+  "paper": "Paper to confirm",
+  "date": "",
+  "page": "",
+  "title": "Gulmohur High School's Akshat wins first prize at America's largest AI fest",
+  "orig": "गुलमोहर हाई स्कूल के छात्र अक्षत ने अमेरिका के सबसे बड़े एआई फेस्ट में जीता प्रथम पुरस्कार",
+  "url": "",
+  "img": "archive/hindi-innovatex-bibha.jpg"
+ },
+ {
+  "ach": "innovatex",
+  "paper": "The Avenue Mail (social post)",
+  "date": "",
+  "page": "",
+  "title": "Jamshedpur student wins first prize at America's largest AI fest, Amazon AWS Innovate X",
+  "orig": "",
+  "url": "",
+  "img": "archive/avenue-mail-innovatex-post.jpg"
+ },
+ {
+  "ach": "sparkx",
+  "paper": "The Avenue Mail",
+  "date": "2025-12-23",
+  "page": "",
+  "title": "Gulmohur student secures natl 2nd spot in AI innovation contest",
+  "orig": "",
+  "url": "",
+  "img": "archive/mail-2025-12-23-sparkx.jpg"
+ },
+ {
+  "ach": "sparkx",
+  "paper": "Paper to confirm",
+  "date": "",
+  "page": "",
+  "title": "News flash: Akshat gets second place nationally in AI competition",
+  "orig": "एआई प्रतियोगिता में अक्षत को राष्ट्रीय स्तर पर दूसरा स्थान",
+  "url": "",
+  "img": "archive/hindi-sparkx-news-flash.jpg"
+ },
+ {
+  "ach": "sparkx",
+  "paper": "Paper to confirm",
+  "date": "",
+  "page": "",
+  "title": "Gulmohur High School Class 8 student takes national 2nd place in Government of India's flagship AI competition",
+  "orig": "गुलमोहर हाई स्कूल के कक्षा 8 के छात्र ने भारत सरकार की प्रमुख एआई प्रतियोगिता में राष्ट्रीय स्तर पर द्वितीय स्थान प्राप्त किया",
+  "url": "",
+  "img": "archive/hindi-sparkx-bibha.jpg"
+ },
+ {
+  "ach": "nit",
+  "paper": "The Avenue Mail",
+  "date": "2025-12-13",
+  "page": "",
+  "title": "Young Gulmohur innovators shine on national stage: Smart grid project wins acclaim at Industry-Academia Conclave 2025",
+  "orig": "",
+  "url": "",
+  "img": "archive/english-nit-conclave-2025-12-13.jpg"
+ },
+ {
+  "ach": "nit",
+  "paper": "Dainik Bhaskar",
+  "date": "2025-12-14",
+  "page": "",
+  "title": "Gulmohur students create history at national level at NIT",
+  "orig": "गुलमोहर के छात्रों ने एनआईटी में राष्ट्रीय स्तर पर रचा इतिहास",
+  "url": "",
+  "img": "archive/dainik-bhaskar-2025-12-14-nit.jpg"
+ },
+ {
+  "ach": "nit",
+  "paper": "Paper to confirm",
+  "date": "",
+  "page": "",
+  "title": "Gulmohur High School students create history at national level at NIT",
+  "orig": "गुलमोहर हाई स्कूल के छात्रों ने एनआईटी में राष्ट्रीय स्तर पर रचा इतिहास",
+  "url": "",
+  "img": "archive/hindi-nit-conclave-photo.jpg"
+ },
+ {
+  "ach": "ict360",
+  "paper": "The Avenue Mail",
+  "date": "2025-10-15",
+  "page": "",
+  "title": "Gulmohur's young coder triumphs at India's Biggest Design C'ship",
+  "orig": "",
+  "url": "",
+  "img": "archive/mail-2025-10-15-ict360.jpg"
+ },
+ {
+  "ach": "ict360",
+  "paper": "Paper to confirm",
+  "date": "2025-10-15",
+  "page": "",
+  "title": "Gulmohur High School's Akshat raises the flag at international design championship",
+  "orig": "गुलमोहर हाई स्कूल के अक्षत ने लहराया अंतर्राष्ट्रीय डिजाइन चैम्पियनशिप में परचम",
+  "url": "",
+  "img": "archive/hindi-2025-10-15-ict360.jpg"
+ },
+ {
+  "ach": "ict360",
+  "paper": "Dainik Bhaskar",
+  "date": "2025-10-16",
+  "page": "",
+  "title": "Gulmohur's Akshat wins international design championship",
+  "orig": "गुलमोहर के अक्षत ने अंतर्राष्ट्रीय डिजाइन चैंपियनशिप जीती",
+  "url": "",
+  "img": "archive/dainik-bhaskar-2025-10-16-ict360.jpg"
+ },
+ {
+  "ach": "ict360",
+  "paper": "Paper to confirm",
+  "date": "",
+  "page": "",
+  "title": "Gulmohur's Akshat wins at international design competition (low-resolution scan)",
+  "orig": "गुलमोहर के अक्षत ने अंतर्राष्ट्रीय डिजाइन प्रतियोगिता में मारी बाजी",
+  "url": "",
+  "img": "archive/hindi-ict360-lowres.jpg"
+ },
+ {
+  "ach": "docs",
+  "paper": "Blix Education · Techfest IIT Bombay",
+  "date": "2024-12-19",
+  "page": "",
+  "title": "Blix-a-thon certificate: Runner-up, Best Innovation Category Award, Junior Category (original document)",
+  "orig": "",
+  "url": "",
+  "img": "archive/blixathon-certificate-2024-12-19.jpg"
+ },
+ {
+  "ach": "techfest",
+  "paper": "The Avenue Mail",
+  "date": "2024-12-20",
+  "page": "",
+  "title": "Gulmohur School student's innovative Robobot wins accolades at IIT Bombay",
+  "orig": "",
+  "url": "",
+  "img": "archive/mail-2024-12-20-techfest.jpg"
+ },
+ {
+  "ach": "techfest",
+  "paper": "Dainik Bhaskar",
+  "date": "2024-12-21",
+  "page": "",
+  "title": "Gulmohur's flag flies high at IIT Bombay Techfest",
+  "orig": "आईआईटी बॉम्बे टेकफेस्ट में गुलमोहर का परचम लहराया",
+  "url": "",
+  "img": "archive/dainik-bhaskar-2024-12-21-techfest.jpg"
+ },
+ {
+  "ach": "techfest",
+  "paper": "Paper to confirm",
+  "date": "",
+  "page": "",
+  "title": "Gulmohur's Akshat flies the flag at IIT Bombay Techfest 2024",
+  "orig": "गुलमोहर के अक्षत ने आईआईटी बॉम्बे टेकफेस्ट 2024 में लहराया परचम",
+  "url": "",
+  "img": "archive/hindi-techfest-2024-photo.jpg"
+ },
+ {
+  "ach": "techfest",
+  "paper": "Paper to confirm",
+  "date": "",
+  "page": "",
+  "title": "Jamshedpur's Akshat becomes runner-up at Techfest",
+  "orig": "टेक फेस्ट में जमशेदपुर का अक्षत बना उप विजेता",
+  "url": "",
+  "img": "archive/hindi-techfest-upavijeta.jpg"
+ },
+ {
+  "ach": "samsung",
+  "paper": "Paper to confirm",
+  "date": "2026-09-14",
+  "page": "",
+  "title": "Gulmohur's Akshat, youngest among top 40 innovators (headline as printed)",
+  "orig": "",
+  "url": "",
+  "img": "archive/samsung-solve-for-tomorrow-top40.jpg"
+ },
+ {
+  "ach": "samsung",
+  "paper": "Prabhat Khabar",
+  "date": "2026-09-15",
+  "page": "4",
+  "title": "Student Akshat makes it to the Samsung Solve for Tomorrow Top 40",
+  "orig": "छात्र अक्षत ने सैमसंग सॉल्व फॉर टुमारो के टॉप 40 में बनायी जगह",
+  "url": "",
+  "img": "archive/prabhat-khabar-2026-09-15-p4-samsung.jpg"
+ },
+ {
+  "ach": "mercury",
+  "paper": "Prabhat Khabar (online)",
+  "date": "2026-11-10",
+  "page": "",
+  "title": "Gulmohur's Akshat Sarkar raises the flag at National Design Championship, tops North-East region",
+  "orig": "",
+  "url": "https://www.prabhatkhabar.com/state/jharkhand/jamshedpur/jamshedpur-student-akshat-sarkar-wins-national-coding-championship-with-ai-project",
+  "img": "archive/web/prabhat-khabar-web-mercury-2026-11-10.jpg"
+ },
+ {
+  "ach": "grant",
+  "paper": "Prabhat Khabar (online)",
+  "date": "2026-10-12",
+  "page": "",
+  "title": "Jamshedpur Class 9 student's feat: idea for a Rs 50 safety tape wins $9,500 international grant",
+  "orig": "",
+  "url": "https://www.prabhatkhabar.com/state/jharkhand/jamshedpur/indian-student-invents-cheap-gas-leak-detector-wins-9500-grant",
+  "img": "archive/web/prabhat-khabar-web-grant-2026-10-12.jpg"
+ },
+ {
+  "ach": "grant",
+  "paper": "Hindustan (online)",
+  "date": "2026-10-12",
+  "page": "",
+  "title": "Jamshedpur News: Young innovator Akshat Sarkar gets $9,500 international grant",
+  "orig": "",
+  "url": "https://www.livehindustan.com/jharkhand/jamshedpur/story-telco-student-wins-9-500-grant-for-low-cost-lpg-leak-detection-tape-201791802819227.html",
+  "img": "archive/web/livehindustan-web-grant-2026-10-12.jpg"
+ },
+ {
+  "ach": "innovatex",
+  "paper": "Hindustan (online)",
+  "date": "2026-01-07",
+  "page": "",
+  "title": "Telco's Akshat builds AI model to stop e-commerce fraud, wins first prize",
+  "orig": "",
+  "url": "https://www.livehindustan.com/jharkhand/jamshedpur/story-eighth-grader-akshat-sarkar-wins-global-award-at-amazon-aws-innovate-x-for-ai-based-e-commerce-fraud-detection-model-201767782722007.html",
+  "img": "archive/web/livehindustan-web-innovatex-2026-01-07.jpg"
+ },
+ {
+  "ach": "innovatex",
+  "paper": "The Avenue Mail (online)",
+  "date": "2026-01-07",
+  "page": "",
+  "title": "Jamshedpur Student Wins First Prize at America's Largest AI Fest, Amazon AWS Innovate X",
+  "orig": "",
+  "url": "https://avenuemail.in/jamshedpur-student-wins-first-prize-at-americas-largest-ai-fest-amazon-aws-innovate-x/",
+  "img": "archive/web/avenue-mail-web-innovatex-2026-01-07.jpg"
+ },
+ {
+  "ach": "ict360",
+  "paper": "The Avenue Mail (online)",
+  "date": "2025-10-15",
+  "page": "",
+  "title": "Gulmohur School Jamshedpur's young coder triumphs at India's Biggest Design Championship",
+  "orig": "",
+  "url": "https://avenuemail.in/gulmohur-school-jamshedpurs-young-coder-triumphs-at-indias-biggest-design-championship/",
+  "img": "archive/web/avenue-mail-web-ict360-2025-10-15.jpg"
+ },
+ {
+  "ach": "techfest",
+  "paper": "The Avenue Mail (online)",
+  "date": "2024-12-20",
+  "page": "",
+  "title": "Jamshedpur student's innovative Robobot design wins accolades at IIT Bombay Techfest",
+  "orig": "",
+  "url": "https://avenuemail.in/jamshedpur-students-innovative-robobot-design-wins-accolades-at-iit-bombay-techfest/",
+  "img": "archive/web/avenue-mail-web-techfest-2024-12-20.jpg"
+ },
+ {
+  "ach": "nit",
+  "paper": "The Avenue Mail (online)",
+  "date": "2025-12-13",
+  "page": "",
+  "title": "Gulmohur High School's young innovators excel at NIT Jamshedpur",
+  "orig": "",
+  "url": "https://avenuemail.in/gulmohur-high-schools-young-innovators-excel-at-nit-jamshedpur/",
+  "img": "archive/web/avenue-mail-web-nit-2025-12-13.jpg"
+ },
+ {
+  "ach": "rhapsody",
+  "paper": "The Avenue Mail (online)",
+  "date": "2026-03-30",
+  "page": "",
+  "title": "Gulmohur School Jamshedpur student stuns with 5th rank among IIT, NIT participants at IISc Coding Event",
+  "orig": "",
+  "url": "https://avenuemail.in/gulmohur-school-jamshedpur-student-stuns-with-5th-rank-among-iit-nit-participants-at-iisc-coding-event/",
+  "img": "archive/web/avenue-mail-web-rhapsody-2026-03-30.jpg"
+ },
+ {
+  "ach": "manak",
+  "paper": "The Avenue Mail (online)",
+  "date": "2026-03-15",
+  "page": "",
+  "title": "Jamshedpur student's LPG safety idea earns INSPIRE MANAK Award",
+  "orig": "",
+  "url": "https://avenuemail.in/jamshedpur-students-lpg-safety-idea-earns-inspire-manak-award/",
+  "img": "archive/web/avenue-mail-web-manak-2026-03-15.jpg"
+ }
+];
+
+/* ---------- rendering ---------- */
+const $ = s => document.querySelector(s);
+let active = "all";
+
+function fmtDate(d){
+  if(!d) return "Date to confirm";
+  const p = d.split("-"); const M = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  if (p.length === 3) return +p[2] + " " + M[+p[1]-1] + " " + p[0];
+  if (p.length === 2) return M[+p[1]-1] + " " + p[0];
+  return d;
+}
+function esc(s){ return String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+
+function chips(){
+  const el = $("#chips");
+  const all = [{id:"all", name:"All"}].concat(ACHIEVEMENTS);
+  el.innerHTML = all.map(a => '<button data-id="'+a.id+'" class="'+(a.id===active?'on':'')+'">'+esc(a.name.split(" · ")[0])+'</button>').join("");
+  el.onclick = e => { const b = e.target.closest("button"); if(!b) return; active = b.dataset.id; chips(); render(); };
+}
+
+function card(e){
+  const thumb = e.img
+    ? '<div class="thumb" data-img="'+esc(e.img)+'" data-cap="'+esc(e.paper+" · "+fmtDate(e.date)+" · "+e.title)+'"><img loading="lazy" src="'+esc(e.img)+'" alt="'+esc(e.paper+": "+e.title)+'"></div>'
+    : '<div class="thumb"><div class="pending">Scan pending</div></div>';
+  return '<div class="item">'+thumb+'<div class="meta">'
+    + '<div class="paper">'+esc(e.paper)+'</div>'
+    + '<div class="title">'+esc(e.title)+'</div>'+(e.orig?'<div class="small" lang="hi">'+esc(e.orig)+'</div>':'')
+    + '<div class="small">'+fmtDate(e.date)+(e.page?' · Page '+esc(e.page):'')+'</div>'
+    + (e.url ? '<div class="small"><a href="'+esc(e.url)+'" target="_blank" rel="noopener">Online version &rarr;</a></div>' : '')
+    + '</div></div>';
+}
+
+function render(){
+  const q = $("#q").value.trim().toLowerCase();
+  let shown = 0, html = "";
+  ACHIEVEMENTS.forEach(a => {
+    if (active !== "all" && active !== a.id) return;
+    const list = ENTRIES.filter(e => e.ach === a.id && (!q || (e.paper+" "+e.title+" "+e.date).toLowerCase().includes(q)))
+                        .sort((x,y) => (y.date||'0').localeCompare(x.date||'0'));
+    if (!list.length) return;
+    shown += list.length;
+    html += '<h2>'+esc(a.name)+'</h2><p class="ach-note">'+esc(a.note)+'</p><div class="grid">'+list.map(card).join("")+'</div>';
+  });
+  $("#out").innerHTML = html || '<p class="sub">Nothing matches that search.</p>';
+  $("#count").textContent = shown + (shown===1 ? " item" : " items");
+}
+
+/* lightbox */
+const lb = $("#lb");
+document.addEventListener("click", e => {
+  const t = e.target.closest(".thumb[data-img]");
+  if (t) { lb.querySelector("img").src = t.dataset.img; lb.querySelector("p").textContent = t.dataset.cap; lb.classList.add("on"); return; }
+  if (e.target.closest("#lb")) lb.classList.remove("on");
+});
+document.addEventListener("keydown", e => { if (e.key === "Escape") lb.classList.remove("on"); });
+
+$("#q").addEventListener("input", render);
+chips(); render();
+</script>
+</body>
+</html>
